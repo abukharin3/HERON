@@ -12,7 +12,7 @@ pip install -e gym
 
 For robotics and code generation, follow the instructions in the respective folders.
 
-## Running
+## Running Experiments
 To run experiments in the Classic Control settings, run the following commands
 ```
 cd ClassicControl
