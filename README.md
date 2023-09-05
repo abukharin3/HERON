@@ -1,6 +1,8 @@
 # Heron
 This is the implementation of HERON, a method for reward design from weak reward signals. This repository contains code for four different experiments: Classic Control, Robotics, Code Generation, and Multi-Agent Traffic Light Control.
 
+![alt text](heron_diagram.png)
+
 ## Installation
 For classic control, run the following commands:
 ```
