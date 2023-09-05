@@ -1,0 +1,20 @@
+[tool.pyright]
+
+include = [
+    "gym/version.py",
+    "gym/logger.py",
+    "gym/envs/registration.py",
+    "gym/spaces/**.py",
+    "gym/core.py",
+    "gym/utils/seeding.py",
+    "gym/envs/classic_control/*.py"
+]
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+]
+strict = ["gym/version.py", "gym/logger.py"]
+
+reportMissingImports = true
+reportMissingTypeStubs = false
+verboseOutput = true

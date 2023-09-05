@@ -1,0 +1,60 @@
+description: RL-Codegen
+
+target:
+  service: aml
+  # name: V100
+  # name: V10032G
+  # name: A100EastUS
+  # name: openai-A10080G
+  # name: A10080G
+  # name: gpu-v100-32g
+  name: V10032G
+
+environment:
+  image: pytorch/pytorch:1.9.1-cuda11.1-cudnn8-devel
+  setup:
+    - pip install numpy==1.21.6
+    - pip install tensorboard
+    - pip install tensorboardX
+
+storage:
+  output:
+    storage_account_name: tsinterns
+    container_name: t-qingru
+    mount_dir: /mnt/t-qingru
+
+code:
+  local_dir: ../
+
+jobs:
+- name: RL-codegen-gen20
+  sku: 1xG8
+  process_count_per_node: 1
+  submit_args:
+    container_args:
+      cpus: 32
+  command:
+    - pip install -r requirements.txt
+    - pip install -e transformers/
+    # Generation
+    #- CUDA_VISIBLE_DEVICES=0 python generate.py --model_path /mnt/t-qingru/RLHF/outputs/finetuning-lr2e-5_batch64/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/train/ --output_path /mnt/t-qingru/RLHF/train_outputs/codet5-finetuned-greedy-baseline/codes_temp0.6_seq20/ -s 0 -e 5000 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 --baseline
+#    - CUDA_VISIBLE_DEVICES=0 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 0 -e 625 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=1 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 625 -e 1250 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=2 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 1250 -e 1875 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=3 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 1875 -e 2500 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=4 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 2500 -e 3125 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=5 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 3125 -e 3750 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=6 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 3750 -e 4375 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+#    - CUDA_VISIBLE_DEVICES=7 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6/ -s 4375 -e 5000 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6
+#    - sleep 38000
+#    - CUDA_VISIBLE_DEVICES=0 python generate.py --model_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/train/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl/base_reward/ -s 0 -e 5000 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6
+    - CUDA_VISIBLE_DEVICES=0 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 0 -e 625 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=1 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 625 -e 1250 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=2 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 1250 -e 1875 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=3 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 1875 -e 2500 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=4 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 2500 -e 3125 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=5 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 3125 -e 3750 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=6 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 3750 -e 4375 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6 & \
+    - CUDA_VISIBLE_DEVICES=7 python generate.py --model_path /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/final_checkpoint/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/test/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl2/base_reward0.6_20/ -s 4375 -e 5000 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6
+    - sleep 38000
+    - CUDA_VISIBLE_DEVICES=0 python generate.py --model_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --tokenizer_path /mnt/t-qingru/RLHF/models/codet5-large-ntp-py/ --test_path /mnt/t-qingru/RLHF/APPS/train/ --output_path /mnt/t-qingru/RLHF/outputs/codet5-rl/base_reward/ -s 0 -e 5000 --num_seqs 20 --num_seqs_per_iter 20 --temperature 0.6

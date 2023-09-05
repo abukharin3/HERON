@@ -1,0 +1,47 @@
+description: RL-Codegen
+
+target:
+  service: aml
+  # name: V100
+  # name: V10032G
+  # name: A100EastUS
+  # name: openai-A10080G
+  # name: A10080G
+  # name: gpu-v100-32g
+  name: V10032G
+
+environment:
+  image: pytorch/pytorch:1.9.1-cuda11.1-cudnn8-devel
+  setup:
+    - pip install numpy==1.21.6
+    - pip install tensorboard
+    - pip install tensorboardX
+
+storage:
+  output:
+    storage_account_name: tsinterns
+    container_name: t-qingru
+    mount_dir: /mnt/t-qingru
+
+code:
+  local_dir: ../
+
+jobs:
+- name: RL-codegen-eval20
+  sku: 1xG8
+  process_count_per_node: 1
+  submit_args:
+    container_args:
+      cpus: 32
+  command:
+    - pip install -r requirements.txt
+    - pip install -e transformers/
+    # Generation
+    #- bash scripts/run_unit_tests.sh /mnt/t-qingru/RLHF/train_outputs/codet5-ntp-large/codes_temp0.6_seq20/ /mnt/t-qingru/RLHF/outputs/codet5-base/train-code-results/codes_finetuning_temp0.6_seq20/ /mnt/t-qingru/RLHF/APPS/train/ 0
+    - bash scripts/run_unit_tests.sh /mnt/t-qingru/RLHF/train_outputs/codet5-finetuned-greedy-baseline/codes_temp0.6_seq20/ /mnt/t-qingru/RLHF/outputs/codet5-finetuned/train-code-results/baseline_codes_finetuning_temp0.6_seq20/ /mnt/t-qingru/RLHF/APPS/train/ 0
+
+#code_path=$1
+#output_path=$2
+#test_path=$3
+#
+#example_tests=$4 # 0: run hidden unit tests; 1: run example unit tests

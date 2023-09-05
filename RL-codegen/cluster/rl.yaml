@@ -1,0 +1,50 @@
+description: RL-Codegen
+
+target:
+  service: aml
+  # name: V100
+  # name: V10032G
+  # name: A100EastUS
+  # name: openai-A10080G
+  # name: A10080G
+  # name: gpu-v100-32g
+  name: V10032G
+
+#target:
+#  service: amlk8s
+#  name: itphyperdgxcl1
+#  vc: bagaivc
+
+environment:
+  image: deepspeed/deepspeed:v0510_torch19_cuda111 # azureml/openmpi4.1.0-cuda11.1-cudnn8-ubuntu18.04 #pytorch/pytorch:1.9.1-cuda11.1-cudnn8-devel
+  setup:
+    - pip install nvsmi
+    - pip install pyext==0.7
+
+storage:
+  output:
+    storage_account_name: tsinterns
+    container_name: t-qingru
+    mount_dir: /mnt/t-qingru
+
+code:
+  local_dir: ../
+
+jobs:
+- name: RL-training
+  sku: 1xG8
+  process_count_per_node: 1
+  submit_args:
+    container_args:
+      cpus: 32
+  command:
+    # Finetuning
+    #- python train.py --batch-size-per-replica 3 --grad-acc-steps 4 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode none --model codet5-large --train-path /mnt/t-qingru/RLHF/APPS/train/
+    #- pip install -r requirements.txt
+    - pip install -e transformers/
+    #- deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-1.0,-0.5,-0.2,0.0/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/ --returns _-1.0_-0.5_-0.2_0.0
+    #- deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-1.0,-0.5,0.5,1.0/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/ --returns _-1.0_-0.5_0.5_1.0
+    #- deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-1.0,-0.4,-0.1,1.0/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/ --returns _-1.0_-0.4_-0.1_1.0
+    #- deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-1.0,-0.8,-0.5,1.0/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/ --returns _-1.0_-0.8_-0.5_1.0
+    - deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-2.0,-1.2,-0.6,2.0/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/ --returns _-2.0_-1.2_-0.6_2.0
+    #- deepspeed train.py --batch-size-per-replica 4 --grad-acc-steps 2 --epochs 10 --lr 2e-5 --save-freq 1000 --log-freq 10 --save_total_limit 5 --fp16 --tuning_mode rl --model codet5-large --model_path /mnt/t-qingru/RLHF/outputs_re/finetuning-lr2e-5_batch64-ntp/final_checkpoint/ --relative_returns  --deepspeed configs/deepspeed_configs.json --save_dir /mnt/t-qingru/RLHF/outputs_rl/rl-lr2e-5_batch64-base/ --train-path /mnt/t-qingru/RLHF/APPS_RL/train/
